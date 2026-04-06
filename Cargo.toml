@@ -1,0 +1,12 @@
+[package]
+name = "alveelan"
+version = "0.1.0"
+edition = "2024"
+description = "আলভীলান — A Bangla programming language for kids"
+
+[dependencies]
+inkwell = { version = "0.8.0", features = ["llvm18-1"] }
+clap = { version = "4.5", features = ["derive"] }
+thiserror = "2.0"
+colored = "3.0"
+unicode-segmentation = "1.12"
