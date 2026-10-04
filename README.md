@@ -1,103 +1,155 @@
-# আলভীলান (Alveelan)
+<div align="center">
 
-আলভীলান (Alveelan) একটি সহজ এবং মজার প্রোগ্রামিং ভাষা যা শিশুদের প্রোগ্রামিং শেখানোর জন্য তৈরি করা হয়েছে। এই ভাষার সমস্ত কিওয়ার্ড (Keywords) এবং ধরন (Types) বাংলায় হওয়ায় এটি বাঙালি শিশুদের জন্য অত্যন্ত সহজবোধ্য।
+# আলভীলান · Alveelan
 
-## প্রধান বৈশিষ্ট্যসমূহ (Key Features)
+**A Bangla programming language for kids, compiled to fast native code with LLVM.**
 
-- **সম্পূর্ণ বাংলা কিওয়ার্ড**: `ধরি`, `যদি`, `নাহলে`, `ততক্ষণ`, `ফাংশন` ইত্যাদি কিওয়ার্ড ব্যবহার করে কোড লেখা যায়।
-- **তালিকা (Arrays)**: `তালিকা[সংখ্যা]` বা `তালিকা[লেখা]` ব্যবহার করে একাধিক মান জমা রাখা যায়।
-- **ফাংশন (Functions)**: নিজের ইচ্ছেমতো ফাংশন তৈরি এবং কল করা যায়, এমনকি রিকার্সিভ (Recursive) ফাংশনও সাপোর্ট করে।
-- **Native Performance**: এটি LLVM ব্যবহার করে সরাসরি মেশিন কোডে কম্পাইল হয়, ফলে এটি অত্যন্ত দ্রুত।
+Every keyword, type and error message is in Bangla. Write numbers with ০–৯, and your program answers in ০–৯ too.
 
-## কিওয়ার্ড এবং ধরন (Keywords & Types)
+[![CI](https://github.com/happinessisreal/alveelan/actions/workflows/ci.yml/badge.svg)](https://github.com/happinessisreal/alveelan/actions/workflows/ci.yml)
+[![Rust](https://img.shields.io/badge/Rust-2024-000000?logo=rust&logoColor=white)](Cargo.toml)
+[![LLVM](https://img.shields.io/badge/LLVM-18--21-262D3A?logo=llvm&logoColor=white)](#-install)
+[![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
-### কিওয়ার্ড (Keywords)
-- `ফাংশন` (Function definition)
-- `শুরু` (Main function)
-- `ধরি` (Variable declaration)
-- `যদি` (If condition)
-- `নাহলে` (Else condition)
-- `ততক্ষণ` (While loop)
-- `ফেরত` (Return statement)
-- `দেখাও` (Print to console)
+**English** · [বাংলা](README.bn.md)
 
-### ধরন (Types)
-- `সংখ্যা` (Integer)
-- `দশমিক` (Float)
-- `লেখা` (String)
-- `সত্যমিথ্যা` (Boolean)
-- `তালিকা[ধরন]` (Array of specific type)
+<img src="docs/demo.png" alt="Terminal: a Fibonacci program written in Bangla is compiled with alveelan and prints the first ten Fibonacci numbers in Bangla digits" width="820">
 
-## উদাহরণ (Examples)
+</div>
 
-### ১. হ্যালো পৃথিবী (Hello World)
-```rust
+## Why
+
+For many young learners in Bangladesh, English keywords are an extra hurdle on top of learning to program. Alveelan removes it:
+
+- **The whole language is in Bangla.** `ধরি` (let), `যদি`/`নাহলে` (if/else), `যতক্ষণ` (while), `ফাংশন` (function), `দেখাও` (print). Types are `সংখ্যা` (whole number), `দশমিক` (decimal), `লেখা` (text), `সত্যমিথ্যা` (true/false) and `তালিকা[…]` (list).
+- **Numbers in Bangla digits.** Programs accept `১০` or `10`, and printed results come back as ৩০, ১২০ and ৩.৫.
+- **Friendly Bangla error messages.** They give the line number and name the variable or type involved, so learners can fix mistakes on their own.
+- **A real compiler.** It does more than interpret: the source goes through a lexer, parser, type checker and LLVM, and comes out as a native executable.
+
+<p align="center"><img src="docs/errors.png" alt="Bangla compiler error messages for a type mismatch, an undefined variable and a syntax error with its line number" width="760"></p>
+
+## 🚀 Install
+
+Prerequisites:
+- [Rust](https://rustup.rs) (1.85+)
+- a C compiler (`cc`)
+- **LLVM 18, 19, 20 or 21** with development headers
+
+```bash
+# Ubuntu / Debian
+sudo apt install llvm-18-dev libpolly-18-dev libzstd-dev clang
+
+git clone https://github.com/happinessisreal/alveelan.git
+cd alveelan
+./install.sh          # detects your LLVM version, builds, installs to ~/.local/bin
+```
+
+<details>
+<summary>Manual build / other LLVM versions</summary>
+
+```bash
+cargo build --release                                            # LLVM 18 (default)
+cargo build --release --no-default-features --features llvm20    # or llvm19 / llvm21
+sudo cp target/release/alveelan /usr/local/bin/
+```
+
+If the build can't find LLVM, point `llvm-sys` at it, e.g. `export LLVM_SYS_181_PREFIX=/usr/lib/llvm-18`.
+
+</details>
+
+## ✏️ Your first program
+
+```
+// hello.alv
 ফাংশন শুরু() {
-    দেখাও("হ্যালো পৃথিবী!")
+    দেখাও("হ্যালো, পৃথিবী!")
 }
 ```
 
-### ২. গণিত (Arithmetic)
-```rust
-ফাংশন শুরু() {
-    ধরি ক: সংখ্যা = ১০
-    ধরি খ: সংখ্যা = ২০
-    দেখাও(ক + খ)
-}
+```bash
+alveelan hello.alv     # অভিনন্দন! 'hello' তৈরি করা হয়েছে।
+./hello                # হ্যালো, পৃথিবী!
 ```
 
-### ৩. তালিকা (Arrays)
-```rust
-ফাংশন শুরু() {
-    ধরি ক: তালিকা[সংখ্যা] = [১, ২, ৩]
-    দেখাও(ক[০])
-    ক[১] = ১০০
-    দেখাও(ক[১])
-}
-```
+## 🧩 A quick tour
 
-### ৪. রিকার্সিভ ফাংশন (Factorial)
-```rust
-ফাংশন ফ্যাক্টোরিয়াল(এন: সংখ্যা) -> সংখ্যা {
+```
+ফাংশন ফ্যাক্টোরিয়াল(এন: সংখ্যা) -> সংখ্যা {       // a function that returns a number
     যদি (এন <= ১) {
         ফেরত ১
     } নাহলে {
-        ফেরত এন * ফ্যাক্টোরিয়াল(এন - ১)
+        ফেরত এন * ফ্যাক্টোরিয়াল(এন - ১)        // recursion works
     }
 }
 
 ফাংশন শুরু() {
-    দেখাও(ফ্যাক্টোরিয়াল(৫))
+    ধরি ক: তালিকা[সংখ্যা] = [১০, ২০, ৩০]        // a list of numbers
+    ক[১] = ১০০
+    দেখাও(ক[১])                                  // ১০০
+
+    ধরি ঘর: সংখ্যা = ১
+    যতক্ষণ (ঘর <= ৩) {                            // while loop
+        যদি (না (ঘর == ২)) {                        // skip ২
+            দেখাও(ফ্যাক্টোরিয়াল(ঘর + ৪))         // ১২০, then ৫০৪০
+        }
+        ঘর = ঘর + ১
+    }
 }
 ```
 
-## ইন্সটলেশন (Installation)
+The full syntax, operators, keyword table and current limitations are in **[docs/LANGUAGE.md](docs/LANGUAGE.md)**.
 
-আলভীলান সহজেই আপনার লিনাক্স পিসিতে ইন্সটল করা যায়।
+## 📚 Examples
 
-### ১. অটোমেটেড স্ক্রিপ্ট (সহজ পদ্ধতি)
-নিচের কমান্ডটি চালিয়ে আপনি সহজেই এটি ইন্সটল করতে পারেন:
-```bash
-chmod +x install.sh
-./install.sh
+| File | Shows |
+|---|---|
+| [`hello.alv`](examples/hello.alv) | printing text |
+| [`math.alv`](examples/math.alv) | variables, arithmetic, `যদি` / `নাহলে` |
+| [`array.alv`](examples/array.alv) | lists of numbers and text, indexing, updating |
+| [`factorial.alv`](examples/factorial.alv) | functions and recursion |
+| [`fibonacci.alv`](examples/fibonacci.alv) | recursion inside a `যতক্ষণ` loop |
+| [`multiplication_table.alv`](examples/multiplication_table.alv) | the ৫ times table (নামতা) with a loop |
+| [`even_odd.alv`](examples/even_odd.alv) | `%`, `এবং`, `অথবা`, `না`, boolean functions |
+| [`circle.alv`](examples/circle.alv) | `দশমিক` (decimal) arithmetic |
+
+Every example is compiled and run in CI, and its output is checked against [`tests/expected/`](tests/expected).
+
+## ⚙️ How it works
+
 ```
-ইন্সটল হয়ে গেলে আউটপুটে দেখানো নির্দেশিকা অনুযায়ী আপনার `PATH` এ আলভীলান যোগ করুন।
-
-### ২. ম্যানুয়াল ইন্সটলেশন
-ম্যানুয়ালি ইন্সটল করতে:
-```bash
-cargo build --release
-sudo cp target/release/alveelan /usr/local/bin/
+.alv ─▶ Lexer ─▶ Parser ─▶ Semantic analysis ─▶ LLVM IR ─▶ object file ─▶ cc + runtime ─▶ executable
 ```
 
-## কিভাবে চালাবেন (How to Run)
+| Stage | Where |
+|---|---|
+| **Lexer.** Bangla keywords, Unicode identifiers, ০–৯ digits normalised to 0–9 | [`src/frontend/lexer`](src/frontend/lexer) |
+| **Parser.** Recursive descent with precedence climbing, producing an AST | [`src/frontend/parser`](src/frontend/parser) |
+| **Semantic analysis.** Scopes, type checking, function signatures, Bangla diagnostics | [`src/frontend/semantic`](src/frontend/semantic) |
+| **Code generation.** LLVM IR through [inkwell](https://github.com/TheDan64/inkwell), optimisation levels `-O0`…`-O3` | [`src/backend/codegen`](src/backend/codegen) |
+| **Runtime.** A tiny C library that prints numbers with Bangla digits | [`runtime/alv_runtime.c`](runtime/alv_runtime.c) |
 
-১. আপনার কোডটি একটি `.alv` ফাইলে লিখুন (যেমন: `test.alv`)।
-২. কম্পাইল করতে নিচের কমান্ডটি দিন:
-   ```bash
-   alveelan test.alv
-   ```
-৩. এটি একটি এক্সিকিউটেবল ফাইল তৈরি করবে (যেমন: `./test`), যা আপনি সরাসরি চালাতে পারবেন।
+```bash
+alveelan program.alv -o program   # output name
+alveelan program.alv -O 2         # optimise
+alveelan program.alv --emit-ir    # inspect the generated LLVM IR
+```
 
----
-শুভ প্রোগ্রামিং!
+## 🧪 Development
+
+```bash
+cargo test --release    # 14 unit tests + end-to-end tests that compile and run every example
+cargo fmt && cargo clippy
+```
+
+## 🗺️ Roadmap
+
+- [ ] `নাও`: read input from the keyboard
+- [ ] Joining text with `+`, and converting numbers to text
+- [ ] `for`-style loops, `থামো` (break)
+- [ ] A browser playground for classrooms
+
+## 📄 License
+
+[MIT](LICENSE)
+
+শুভ প্রোগ্রামিং! 🎈

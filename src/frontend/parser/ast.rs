@@ -8,6 +8,20 @@ pub enum AlvType {
     Void,
 }
 
+/// Types are shown to learners by their Bangla keyword, e.g. `তালিকা[সংখ্যা]`.
+impl std::fmt::Display for AlvType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            AlvType::Songkhya => write!(f, "সংখ্যা"),
+            AlvType::Doshomik => write!(f, "দশমিক"),
+            AlvType::Lekha => write!(f, "লেখা"),
+            AlvType::SottoMittha => write!(f, "সত্যমিথ্যা"),
+            AlvType::Array(inner) => write!(f, "তালিকা[{}]", inner),
+            AlvType::Void => write!(f, "কিছু না"),
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum BinaryOp {
     Add,

@@ -243,6 +243,17 @@ impl<'a> Lexer<'a> {
     }
 }
 
+/// Render a number with Bangla digits (used in compiler messages): 12 → "১২".
+pub fn to_bangla_digits(n: impl std::fmt::Display) -> String {
+    n.to_string()
+        .chars()
+        .map(|c| match c.to_digit(10) {
+            Some(d) => char::from_u32(0x09E6 + d).unwrap(),
+            None => c,
+        })
+        .collect()
+}
+
 pub fn is_bangla_digit(c: char) -> bool {
     (c as u32) >= 0x09E6 && (c as u32) <= 0x09EF
 }

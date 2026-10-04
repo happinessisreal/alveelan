@@ -211,7 +211,9 @@ impl<'a, 'ctx> CodeGenerator<'a, 'ctx> {
                 for s in then_branch {
                     self.compile_statement(s, fn_val)?;
                 }
-                if then_bb.get_terminator().is_none() {
+                // Nested control flow may have moved the builder to another block,
+                // so check the *current* block, not the one we started in.
+                if self.current_block_open() {
                     self.builder
                         .build_unconditional_branch(merge_bb)
                         .map_err(|e| e.to_string())?;
@@ -224,7 +226,7 @@ impl<'a, 'ctx> CodeGenerator<'a, 'ctx> {
                         self.compile_statement(s, fn_val)?;
                     }
                 }
-                if else_bb.get_terminator().is_none() {
+                if self.current_block_open() {
                     self.builder
                         .build_unconditional_branch(merge_bb)
                         .map_err(|e| e.to_string())?;
@@ -251,7 +253,7 @@ impl<'a, 'ctx> CodeGenerator<'a, 'ctx> {
                 for s in body {
                     self.compile_statement(s, fn_val)?;
                 }
-                if body_bb.get_terminator().is_none() {
+                if self.current_block_open() {
                     self.builder
                         .build_unconditional_branch(cond_bb)
                         .map_err(|e| e.to_string())?;
@@ -607,30 +609,24 @@ impl<'a, 'ctx> CodeGenerator<'a, 'ctx> {
                         .build_call(printf, &[str_ptr.into()], "call")
                         .unwrap();
                 } else {
-                    let format = self
-                        .builder
-                        .build_global_string_ptr("%lld\n", "f_int")
-                        .unwrap();
+                    // Printed in Bangla digits by the runtime (see runtime/alv_runtime.c).
+                    let i64_type = self.context.i64_type();
+                    let print_int = self.runtime_fn("alv_print_int", i64_type.into());
+                    let v = if v.get_type().get_bit_width() == 64 {
+                        v
+                    } else {
+                        self.builder.build_int_s_extend(v, i64_type, "ext").unwrap()
+                    };
                     self.builder
-                        .build_call(
-                            printf,
-                            &[format.as_basic_value_enum().into(), v.into()],
-                            "call",
-                        )
+                        .build_call(print_int, &[v.into()], "call")
                         .unwrap();
                 }
             }
             BasicValueEnum::FloatValue(v) => {
-                let format = self
-                    .builder
-                    .build_global_string_ptr("%f\n", "f_float")
-                    .unwrap();
+                let f64_type = self.context.f64_type();
+                let print_float = self.runtime_fn("alv_print_float", f64_type.into());
                 self.builder
-                    .build_call(
-                        printf,
-                        &[format.as_basic_value_enum().into(), v.into()],
-                        "call",
-                    )
+                    .build_call(print_float, &[v.into()], "call")
                     .unwrap();
             }
             BasicValueEnum::PointerValue(v) => {
@@ -649,6 +645,21 @@ impl<'a, 'ctx> CodeGenerator<'a, 'ctx> {
             _ => return Err("ত্রুটি: এই ধরণের মান দেখানো সম্ভব নয়।".to_string()),
         }
         Ok(())
+    }
+
+    /// True if the builder's current block still needs a terminator.
+    fn current_block_open(&self) -> bool {
+        self.builder
+            .get_insert_block()
+            .is_some_and(|bb| bb.get_terminator().is_none())
+    }
+
+    /// Declare (once) a `void name(arg)` function provided by the C runtime.
+    fn runtime_fn(&self, name: &str, arg: BasicMetadataTypeEnum<'ctx>) -> FunctionValue<'ctx> {
+        self.module.get_function(name).unwrap_or_else(|| {
+            let fn_type = self.context.void_type().fn_type(&[arg], false);
+            self.module.add_function(name, fn_type, None)
+        })
     }
 
     pub fn emit_object_file(&self, path: &str) -> Result<(), String> {

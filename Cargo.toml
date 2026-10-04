@@ -2,11 +2,25 @@
 name = "alveelan"
 version = "0.1.0"
 edition = "2024"
-description = "আলভীলান — A Bangla programming language for kids"
+description = "আলভীলান — A Bangla programming language for kids, compiled to native code with LLVM"
+license = "MIT"
+repository = "https://github.com/happinessisreal/alveelan"
+readme = "README.md"
+keywords = ["bangla", "compiler", "llvm", "education", "language"]
+categories = ["compilers"]
 
 [dependencies]
-inkwell = { version = "0.8.0", features = ["llvm18-1"] }
+inkwell = "0.8.0"
 clap = { version = "4.5", features = ["derive"] }
 thiserror = "2.0"
 colored = "3.0"
 unicode-segmentation = "1.12"
+
+# Pick the LLVM you have installed (exactly one). Default: LLVM 18.
+#   cargo build --release --no-default-features --features llvm20
+[features]
+default = ["llvm18"]
+llvm18 = ["inkwell/llvm18-1"]
+llvm19 = ["inkwell/llvm19-1"]
+llvm20 = ["inkwell/llvm20-1"]
+llvm21 = ["inkwell/llvm21-1"]

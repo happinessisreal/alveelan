@@ -8,6 +8,9 @@ use std::process::Command;
 mod backend;
 mod frontend;
 
+/// C runtime linked into every program (Bangla-digit number printing).
+const RUNTIME_C: &str = include_str!("../runtime/alv_runtime.c");
+
 use crate::backend::codegen::CodeGenerator;
 use crate::frontend::lexer::Lexer;
 use crate::frontend::parser::Parser;
@@ -99,20 +102,32 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let obj_file = format!("{}.o", output_name);
     codegen.emit_object_file(&obj_file)?;
 
-    // 6. Link
+    // 6. Link (with the small C runtime that prints Bangla digits)
+    let runtime_src = std::env::temp_dir().join(format!("alv_runtime_{}.c", std::process::id()));
+    fs::write(&runtime_src, RUNTIME_C)?;
+
     let status = Command::new("cc")
         .arg(&obj_file)
+        .arg(&runtime_src)
         .arg("-o")
         .arg(&output_name)
         .arg("-no-pie") // Often needed for simple LLVM-emitted objects
-        .status()?;
+        .status();
 
-    if !status.success() {
-        return Err("লিঙ্কিং করা সম্ভব হয়নি। (Linking failed)".into());
+    // Cleanup intermediates whether or not linking succeeded
+    let _ = fs::remove_file(&obj_file);
+    let _ = fs::remove_file(&runtime_src);
+
+    match status {
+        Ok(s) if s.success() => {}
+        Ok(_) => return Err("লিঙ্কিং করা সম্ভব হয়নি। (Linking failed)".into()),
+        Err(e) => {
+            return Err(format!(
+                "'cc' চালানো যায়নি — একটি C কম্পাইলার ইন্সটল করুন। (Could not run 'cc': {e})"
+            )
+            .into());
+        }
     }
-
-    // Cleanup object file
-    fs::remove_file(obj_file)?;
 
     println!(
         "অভিনন্দন! '{}' তৈরি করা হয়েছে। (Successfully created '{}')",

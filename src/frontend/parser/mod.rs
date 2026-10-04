@@ -1,6 +1,6 @@
 pub mod ast;
-use crate::frontend::lexer::Lexer;
 use crate::frontend::lexer::token::{Token, TokenType};
+use crate::frontend::lexer::{Lexer, to_bangla_digits};
 use crate::frontend::parser::ast::*;
 
 /// Alveelan Parser performs recursive descent parsing to generate an AST.
@@ -37,7 +37,9 @@ impl<'a> Parser<'a> {
         } else {
             Err(format!(
                 "ত্রুটি [লাইন {}]: '{}' প্রত্যাশিত ছিল, কিন্তু '{}' পাওয়া গেছে।",
-                self.current_token.line, token_type, self.current_token.token_type
+                to_bangla_digits(self.current_token.line),
+                token_type,
+                self.current_token.token_type
             ))
         }
     }
@@ -70,7 +72,8 @@ impl<'a> Parser<'a> {
             _ => {
                 return Err(format!(
                     "ত্রুটি [লাইন {}]: ফাংশনের একটি নাম প্রত্যাশিত ছিল, কিন্তু '{}' পাওয়া গেছে।",
-                    self.current_token.line, self.current_token.token_type
+                    to_bangla_digits(self.current_token.line),
+                    self.current_token.token_type
                 ));
             }
         };
@@ -145,7 +148,7 @@ impl<'a> Parser<'a> {
             }
             _ => Err(format!(
                 "ত্রুটি [লাইন {}]: একটি সঠিক ধরন (যেমন: সংখ্যা, লেখা) প্রত্যাশিত ছিল।",
-                self.current_token.line
+                to_bangla_digits(self.current_token.line)
             )),
         }
     }
@@ -153,7 +156,9 @@ impl<'a> Parser<'a> {
     fn parse_block(&mut self) -> Result<Vec<Stmt>, String> {
         self.expect(TokenType::LBrace)?;
         let mut statements = Vec::new();
-        while !matches!(self.current_type(), TokenType::RBrace) && !matches!(self.current_type(), TokenType::Eof) {
+        while !matches!(self.current_type(), TokenType::RBrace)
+            && !matches!(self.current_type(), TokenType::Eof)
+        {
             statements.push(self.parse_statement()?);
         }
         self.expect(TokenType::RBrace)?;
@@ -244,7 +249,9 @@ impl<'a> Parser<'a> {
     fn parse_return_statement(&mut self) -> Result<Stmt, String> {
         self.advance(); // consume ফেরত
         let mut value = None;
-        if !matches!(self.current_type(), TokenType::RBrace) && !matches!(self.current_type(), TokenType::Eof) {
+        if !matches!(self.current_type(), TokenType::RBrace)
+            && !matches!(self.current_type(), TokenType::Eof)
+        {
             // Check if there is an expression to return (simplified)
             // If it's not a delimiter, assume it's an expression
             if !matches!(self.current_type(), TokenType::RBrace) {
@@ -380,7 +387,8 @@ impl<'a> Parser<'a> {
             }
             _ => Err(format!(
                 "ত্রুটি [লাইন {}]: একটি সঠিক এক্সপ্রেশন প্রত্যাশিত ছিল, কিন্তু '{}' পাওয়া গেছে।",
-                self.current_token.line, self.current_token.token_type
+                to_bangla_digits(self.current_token.line),
+                self.current_token.token_type
             )),
         }
     }

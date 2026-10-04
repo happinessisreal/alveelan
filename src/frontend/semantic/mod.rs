@@ -106,7 +106,7 @@ impl SemanticAnalyzer {
                 let value_type = self.analyze_expression(value)?;
                 if !self.types_match(alv_type, &value_type) {
                     return Err(format!(
-                        "ত্রুটি: '{}' চলকটির ধরন হল {:?}, কিন্তু আপনি একে {:?} করার চেষ্টা করছেন।",
+                        "ত্রুটি: '{}' চলকটির ধরন হল {}, কিন্তু আপনি একে {} করার চেষ্টা করছেন।",
                         name, alv_type, value_type
                     ));
                 }
@@ -120,7 +120,7 @@ impl SemanticAnalyzer {
                 let value_type = self.analyze_expression(value)?;
                 if !self.types_match(&var_type, &value_type) {
                     return Err(format!(
-                        "ত্রুটি: '{}' চলকটির ধরন হল {:?}, কিন্তু আপনি এতে {:?} মান রাখার চেষ্টা করছেন।",
+                        "ত্রুটি: '{}' চলকটির ধরন হল {}, কিন্তু আপনি এতে {} মান রাখার চেষ্টা করছেন।",
                         name, var_type, value_type
                     ));
                 }
@@ -169,7 +169,7 @@ impl SemanticAnalyzer {
                 };
                 if !self.types_match(return_type, &expr_type) {
                     return Err(format!(
-                        "ত্রুটি: ফাংশনটি {:?} ফেরত দেবার কথা, কিন্তু আপনি {:?} ফেরত দিচ্ছেন।",
+                        "ত্রুটি: ফাংশনটি {} ফেরত দেবার কথা, কিন্তু আপনি {} ফেরত দিচ্ছেন।",
                         return_type, expr_type
                     ));
                 }
@@ -185,7 +185,7 @@ impl SemanticAnalyzer {
                 let value_type = self.analyze_expression(value)?;
                 if !self.types_match(&target_type, &value_type) {
                     return Err(format!(
-                        "ত্রুটি: ইনডেক্সে {:?} মান রাখার চেষ্টা করছেন, কিন্তু ইনডেক্সটির ধরন হল {:?}",
+                        "ত্রুটি: ইনডেক্সে {} মান রাখার চেষ্টা করছেন, কিন্তু ইনডেক্সটির ধরন হল {}",
                         value_type, target_type
                     ));
                 }
@@ -282,7 +282,7 @@ impl SemanticAnalyzer {
                     let arg_type = self.analyze_expression(arg)?;
                     if !self.types_match(&param.alv_type, &arg_type) {
                         return Err(format!(
-                            "ত্রুটি: '{}' ফাংশনের '{}' প্যারামিটারটির জন্য {:?} প্রত্যাশিত ছিল।",
+                            "ত্রুটি: '{}' ফাংশনের '{}' প্যারামিটারটির জন্য {} প্রত্যাশিত ছিল।",
                             name, param.name, param.alv_type
                         ));
                     }
@@ -299,9 +299,9 @@ impl SemanticAnalyzer {
                     let elem_type = self.analyze_expression(elem)?;
                     if !self.types_match(&first_type, &elem_type) {
                         return Err(format!(
-                            "ত্রুটি: তালিকার ১ নং সদস্যের ধরন {:?}, কিন্তু {} নং সদস্যের ধরন {:?}। তালিকার সবগুলো সদস্য এক ধরনের হতে হবে।",
+                            "ত্রুটি: তালিকার ১ নং সদস্যের ধরন {}, কিন্তু {} নং সদস্যের ধরন {}। তালিকার সবগুলো সদস্য এক ধরনের হতে হবে।",
                             first_type,
-                            i + 1,
+                            crate::frontend::lexer::to_bangla_digits(i + 1),
                             elem_type
                         ));
                     }

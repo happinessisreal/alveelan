@@ -127,7 +127,7 @@ impl fmt::Display for TokenType {
             TokenType::Arrow => write!(f, "->"),
             TokenType::LBracket => write!(f, "["),
             TokenType::RBracket => write!(f, "]"),
-            TokenType::EOF => write!(f, "EOF"),
+            TokenType::Eof => write!(f, "EOF"),
             TokenType::Unknown(c) => write!(f, "Unknown({})", c),
         }
     }
