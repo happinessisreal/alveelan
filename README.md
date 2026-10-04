@@ -13,6 +13,8 @@ Every keyword, type and error message is in Bangla. Write numbers with ০–৯
 [![LLVM](https://img.shields.io/badge/LLVM-18--21-262D3A?logo=llvm&logoColor=white)](#-install)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
+<sub><i>The logo reads <b>“এটি অ নয়”</b>, "this is not অ", after Magritte. In code, a symbol is never the thing it names. The blinking cursor is the full stop.</i></sub>
+
 **English** · [বাংলা](README.bn.md)
 
 <img src="docs/demo.png" alt="Terminal: a Fibonacci program written in Bangla is compiled with alveelan and prints the first ten Fibonacci numbers in Bangla digits" width="820">

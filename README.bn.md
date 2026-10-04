@@ -9,6 +9,8 @@
 [![CI](https://github.com/happinessisreal/alveelan/actions/workflows/ci.yml/badge.svg)](https://github.com/happinessisreal/alveelan/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
+<sub><i>লোগো: “এটি অ নয়” — মাগরিতের “এটি পাইপ নয়”-এর মতো; কোডে একটি প্রতীক কখনোই সেই জিনিসটি নয়। জ্বলতে-নিভতে থাকা কার্সরটিই দাঁড়ি।</i></sub>
+
 [English](README.md) · **বাংলা**
 
 <img src="docs/demo.png" alt="আলভীলানে লেখা ফিবোনাচি প্রোগ্রাম কম্পাইল ও চালানো হচ্ছে" width="820">
