@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="docs/logo.svg" alt="Alveelan logo: অ on the red disc of the Bangladesh flag" width="104">
+
 # আলভীলান · Alveelan
 
 **A Bangla programming language for kids, compiled to fast native code with LLVM.**
